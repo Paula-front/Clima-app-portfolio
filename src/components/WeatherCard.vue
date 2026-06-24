@@ -49,14 +49,24 @@
       </div>
     </div>
 
-    <button
-      class="favorite-btn"
-      :class="{ active: esFavorito }"
-      @click="toggleFavorito"
-    >
-      <span v-if="esFavorito">❤️ En favoritos</span>
-      <span v-else>🤍 Agregar a favoritos</span>
-    </button>
+    <div class="card-actions">
+      <RouterLink
+        v-if="ciudad?.nombre"
+        class="detail-btn"
+        :to="{ name: 'Detalle', params: { ciudad: ciudad.nombre } }"
+      >
+        🔎 Ver detalle y pronóstico
+      </RouterLink>
+
+      <button
+        class="favorite-btn"
+        :class="{ active: esFavorito }"
+        @click="toggleFavorito"
+      >
+        <span v-if="esFavorito">❤️ En favoritos</span>
+        <span v-else>🤍 Agregar a favoritos</span>
+      </button>
+    </div>
   </article>
 </template>
 
@@ -247,22 +257,41 @@ export default {
   font-size: 0.7rem;
 }
 
+.card-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.detail-btn,
 .favorite-btn {
   width: 100%;
-  margin-top: 16px;
-  border: 1px solid rgba(191, 219, 254, 0.5);
   border-radius: 15px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #bfdbfe;
   font-weight: 800;
   cursor: pointer;
   transition: 0.25s;
+  text-align: center;
 }
 
+.detail-btn {
+  display: block;
+  text-decoration: none;
+  background: rgba(96, 165, 250, 0.22);
+  border: 1px solid rgba(147, 197, 253, 0.65);
+  color: #dbeafe;
+}
+
+.detail-btn:hover,
 .favorite-btn:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.16);
+}
+
+.favorite-btn {
+  border: 1px solid rgba(191, 219, 254, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  color: #bfdbfe;
 }
 
 .favorite-btn.active {
