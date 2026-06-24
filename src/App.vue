@@ -1,28 +1,39 @@
 <template>
   <div :class="['app-wrapper', tema]">
-    <Navbar v-if="mostrarNavbar" />
+    <Navbar v-if="mostrarLayout" />
+
     <main class="main-content">
       <RouterView />
     </main>
+
+    <AppFooter v-if="mostrarLayout" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import Navbar from './components/Navbar.vue'
+import AppFooter from './components/Footer.vue'
 
 export default {
   name: 'App',
-  components: { Navbar },
+
+  components: {
+    Navbar,
+    AppFooter
+  },
+
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'usuarioActual']),
+
     tema() {
       if (this.usuarioActual?.preferencias?.tema === 'light') return 'tema-claro'
       return 'tema-oscuro'
     },
-    mostrarNavbar() {
-      const rutasSinNavbar = ['/login', '/registro']
-      return !rutasSinNavbar.includes(this.$route.path)
+
+    mostrarLayout() {
+      const rutasSinLayout = ['/login', '/registro']
+      return !rutasSinLayout.includes(this.$route.path)
     }
   }
 }

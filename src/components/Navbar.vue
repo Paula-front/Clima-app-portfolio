@@ -3,7 +3,11 @@
     <div class="navbar-container">
       <button class="navbar-brand navbar-button" @click="irInicio">
         <span class="brand-icon">🌤️</span>
-        <span class="brand-text">ClimaApp</span>
+
+        <span class="brand-copy">
+          <span class="brand-text">ClimaApp</span>
+          <small>Tu clima, a un clic</small>
+        </span>
       </button>
 
       <div class="navbar-links">
@@ -12,7 +16,8 @@
           :class="{ 'nav-link-active': $route.path === '/' }"
           @click="irInicio"
         >
-          🏠 Inicio
+          <span>🏠</span>
+          Inicio
         </button>
 
         <RouterLink
@@ -21,7 +26,8 @@
           class="nav-link"
           active-class="nav-link-active"
         >
-          ❤️ Favoritos
+          <span>❤️</span>
+          Favoritos
           <span v-if="cantidadFavoritos > 0" class="fav-count">
             {{ cantidadFavoritos }}
           </span>
@@ -33,7 +39,8 @@
           class="nav-link"
           active-class="nav-link-active"
         >
-          👤 Perfil
+          <span>👤</span>
+          Perfil
         </RouterLink>
       </div>
 
@@ -41,20 +48,24 @@
         <template v-if="isAuthenticated">
           <div class="user-info">
             <div class="user-avatar">{{ iniciales }}</div>
-            <span class="user-name">{{ usuarioActual.nombre }}</span>
+
+            <div class="user-copy">
+              <span class="user-label">Sesión activa</span>
+              <span class="user-name">{{ usuarioActual.nombre }}</span>
+            </div>
           </div>
 
           <button class="btn-logout" @click="cerrarSesion">
-            🚪 Salir
+            Salir
           </button>
         </template>
 
         <template v-else>
-          <RouterLink to="/login" class="btn btn-outline btn-sm">
+          <RouterLink to="/login" class="btn-login">
             Iniciar sesión
           </RouterLink>
 
-          <RouterLink to="/registro" class="btn btn-primary btn-sm">
+          <RouterLink to="/registro" class="btn-register">
             Registrarse
           </RouterLink>
         </template>
@@ -120,33 +131,34 @@ export default {
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border-color);
+  padding: 10px 16px;
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
 }
 
 .navbar-oscuro {
-  background: rgba(10, 15, 30, 0.9);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(30, 64, 175, 0.82));
 }
 
 .navbar-claro {
-  background: rgba(239, 246, 255, 0.9);
+  background: rgba(248, 250, 252, 0.88);
 }
 
 .navbar-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
-  height: 64px;
+  min-height: 66px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 22px;
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
   text-decoration: none;
   flex-shrink: 0;
 }
@@ -160,60 +172,101 @@ export default {
 }
 
 .brand-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
   font-size: 24px;
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+.brand-copy {
+  display: grid;
+  line-height: 1.05;
 }
 
 .brand-text {
-  font-size: 18px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #60a5fa, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 19px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #bfdbfe, #ffffff);
   background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-copy small {
+  margin-top: 3px;
+  color: #bfdbfe;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
   justify-content: center;
 }
 
 .nav-link {
-  display: flex;
+  min-height: 40px;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 10px;
+  gap: 7px;
+  padding: 9px 15px;
+  border-radius: 999px;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  transition: all 0.2s ease;
+  font-weight: 800;
+  color: #dbeafe;
+  transition: 0.25s ease;
   position: relative;
   white-space: nowrap;
 }
 
+.navbar-claro .nav-link {
+  color: #1e293b;
+}
+
 .nav-link:hover {
-  background: var(--bg-card);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.navbar-claro .nav-link:hover {
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 .nav-link-active {
-  background: rgba(96, 165, 250, 0.15);
-  color: var(--accent) !important;
+  background: rgba(96, 165, 250, 0.22);
+  color: white !important;
+  box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.28);
+}
+
+.navbar-claro .nav-link-active {
+  background: #dbeafe;
+  color: #2563eb !important;
 }
 
 .fav-count {
-  background: var(--accent);
+  min-width: 20px;
+  height: 20px;
+  display: inline-grid;
+  place-items: center;
+  background: #ef4444;
   color: white;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 10px;
-  min-width: 18px;
-  text-align: center;
+  font-size: 11px;
+  font-weight: 900;
+  border-radius: 999px;
+  padding: 0 6px;
 }
 
 .navbar-user {
@@ -226,56 +279,113 @@ export default {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
+  padding: 6px 10px 6px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.navbar-claro .user-info {
+  background: white;
+  border-color: #dbeafe;
 }
 
 .user-avatar {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   font-size: 13px;
   color: white;
-  font-weight: 700;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  font-weight: 900;
+}
+
+.user-copy {
+  display: grid;
+  line-height: 1.05;
+}
+
+.user-label {
+  color: #bfdbfe;
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.navbar-claro .user-label {
+  color: #64748b;
 }
 
 .user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 900;
+  color: white;
+}
+
+.navbar-claro .user-name {
+  color: #0f172a;
+}
+
+.btn-logout,
+.btn-login,
+.btn-register {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 9px 16px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.btn-login {
+  border: 1px solid rgba(191, 219, 254, 0.5);
+  color: #dbeafe;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-register {
+  border: none;
+  color: white;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
 }
 
 .btn-logout {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 10px;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.08);
-  color: var(--danger);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+}
+
+.navbar-claro .btn-login {
+  color: #2563eb;
+  background: white;
+  border-color: #bfdbfe;
+}
+
+.btn-login:hover,
+.btn-register:hover,
+.btn-logout:hover {
+  transform: translateY(-2px);
 }
 
 .btn-logout:hover {
-  background: rgba(239, 68, 68, 0.15);
-  transform: translateY(-1px);
+  background: rgba(239, 68, 68, 0.2);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .navbar-container {
-    height: auto;
-    padding: 10px 14px;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 12px;
   }
 
   .navbar-brand {
@@ -285,59 +395,52 @@ export default {
   .navbar-user {
     order: 2;
     margin-left: auto;
-    gap: 6px;
   }
 
   .navbar-links {
     order: 3;
     width: 100%;
     justify-content: center;
-  }
-
-  .brand-text {
-    font-size: 16px;
-  }
-
-  .brand-icon {
-    font-size: 22px;
-  }
-
-  .nav-link {
-    font-size: 13px;
-    padding: 7px 10px;
-  }
-
-  .btn-sm {
-    font-size: 12px;
-    padding: 7px 10px;
-  }
-
-  .user-name {
-    display: none;
+    overflow-x: auto;
+    padding-bottom: 2px;
   }
 }
 
-@media (max-width: 430px) {
-  .navbar-container {
-    padding: 10px;
+@media (max-width: 560px) {
+  .navbar {
+    padding: 8px 10px;
+  }
+
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+  }
+
+  .brand-text {
+    font-size: 17px;
+  }
+
+  .brand-copy small,
+  .user-copy {
+    display: none;
   }
 
   .navbar-user {
-    gap: 5px;
-  }
-
-  .navbar-links {
-    gap: 4px;
+    gap: 6px;
   }
 
   .nav-link {
     font-size: 12px;
-    padding: 6px 9px;
+    padding: 8px 11px;
   }
 
-  .btn-sm {
-    font-size: 11px;
-    padding: 6px 8px;
+  .btn-login,
+  .btn-register,
+  .btn-logout {
+    min-height: 36px;
+    padding: 8px 11px;
+    font-size: 12px;
   }
 }
 </style>

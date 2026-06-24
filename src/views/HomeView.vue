@@ -5,7 +5,7 @@
         <div class="hero-copy">
           <p class="hero-kicker">🌤️ ClimaApp · Portafolio Final M8</p>
 
-          <h1>Consulta el clima, pronóstico y alertas en tiempo real.</h1>
+          <h1>Consulta el Clima, Pronóstico y Alertas en Tiempo Real.</h1>
 
           <p class="hero-subtitle">
             Busca una ciudad, revisa el clima actual, estadísticas semanales y guarda tus lugares favoritos.
@@ -62,7 +62,7 @@
           <div class="summary-card">
             <span>⚠️</span>
             <strong>Alertas</strong>
-            <small>Reglas simples</small>
+            <small>Eventos meteorológicos</small>
           </div>
         </div>
       </div>
