@@ -3,7 +3,7 @@
     <section class="hero">
       <div class="hero-panel">
         <div class="hero-copy">
-          <p class="hero-kicker">🌤️ ClimaApp · Portafolio Final M8</p>
+          <p class="hero-kicker">🌤️🌤 CLIMAAPP • WEATHER DASHBOARD</p>
 
           <h1>Consulta el Clima, Pronóstico y Alertas en Tiempo Real.</h1>
 

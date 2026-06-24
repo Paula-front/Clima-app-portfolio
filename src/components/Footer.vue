@@ -39,7 +39,9 @@
     </div>
 
     <div class="footer-bottom">
-      <p>© 2026 Paula Pérez Valenzuela · Portafolio Front-End</p>
+      <p>© 2026 Paula Pérez Valenzuela. Todos los derechos reservados</p>
+      <p>
+          Desarrollado con Vue 3 + Open-Meteo API</p>
     </div>
   </footer>
 </template>
@@ -57,6 +59,7 @@ export default {
   color: #e5e7eb;
   border-top: 1px solid rgba(191, 219, 254, 0.18);
   padding: 42px 24px 22px;
+  overflow: hidden;
 }
 
 .footer-container {
@@ -77,6 +80,7 @@ export default {
 .footer-logo span {
   width: 48px;
   height: 48px;
+  flex: 0 0 48px;
   display: grid;
   place-items: center;
   border-radius: 18px;
@@ -140,16 +144,54 @@ export default {
   color: #bfdbfe;
   font-size: 0.86rem;
   font-weight: 700;
+  line-height: 1.6;
 }
 
 @media (max-width: 800px) {
+  .app-footer {
+    padding: 34px 18px 20px;
+  }
+
   .footer-container {
     grid-template-columns: 1fr;
     gap: 26px;
   }
 
+  .footer-description {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
   .app-footer {
-    padding: 34px 18px 20px;
+    padding: 32px 16px 20px;
+  }
+
+  .footer-logo {
+    align-items: flex-start;
+  }
+
+  .footer-logo span {
+    width: 42px;
+    height: 42px;
+    flex-basis: 42px;
+    border-radius: 15px;
+    font-size: 23px;
+  }
+
+  .footer-logo h2 {
+    font-size: 1.25rem;
+  }
+
+  .footer-logo p,
+  .footer-description,
+  .footer-column li,
+  .footer-bottom {
+    font-size: 0.84rem;
+  }
+
+  .footer-bottom {
+    text-align: left;
   }
 }
 </style>
