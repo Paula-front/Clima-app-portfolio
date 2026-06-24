@@ -1,124 +1,169 @@
 <template>
   <div class="home-page">
     <section class="hero">
-      <div class="hero-content">
-        <p class="hero-kicker">🌦️ ClimaApp</p>
+      <div class="hero-panel">
+        <div class="hero-copy">
+          <p class="hero-kicker">🌤️ ClimaApp · Portafolio Final M8</p>
 
-        <h1>Consulta el Clima Actual y Semanal de tus Ciudades Favoritas.</h1>
+          <h1>Consulta el clima, pronóstico y alertas en tiempo real.</h1>
 
-        <p class="hero-subtitle">
-          Busca una ciudad, revisa temperatura, viento, humedad, alertas y guarda tus lugares favoritos.
-        </p>
+          <p class="hero-subtitle">
+            Busca una ciudad, revisa el clima actual, estadísticas semanales y guarda tus lugares favoritos.
+          </p>
 
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
 
-          <input
-            v-model="busqueda"
-            type="text"
-            placeholder="Ej: Santiago, Tokio, París..."
-            @input="onInput"
-            @keyup.enter="buscarCiudad"
-          />
+            <input
+              v-model="busqueda"
+              type="text"
+              placeholder="Buscar ciudad: Santiago, Tokio, París..."
+              @input="onInput"
+              @keyup.enter="buscarCiudad"
+            />
 
-          <button
-            @click="buscarCiudad"
-            :disabled="cargandoBusqueda || !busqueda.trim()"
-          >
-            {{ cargandoBusqueda ? 'Buscando...' : 'Buscar' }}
-          </button>
+            <button
+              @click="buscarCiudad"
+              :disabled="cargandoBusqueda || !busqueda.trim()"
+            >
+              {{ cargandoBusqueda ? 'Buscando...' : 'Buscar' }}
+            </button>
+          </div>
+
+          <div v-if="sugerencias.length" class="sugerencias">
+            <button
+              v-for="s in sugerencias"
+              :key="s.lat + s.lon"
+              @click="seleccionarSugerencia(s)"
+            >
+              📍 {{ s.nombre }}, {{ s.pais }}
+              <small v-if="s.region">{{ s.region }}</small>
+            </button>
+          </div>
+
+          <p v-if="errorBusqueda" class="error-msg">
+            ⚠️ {{ errorBusqueda }}
+          </p>
         </div>
 
-        <div v-if="sugerencias.length" class="sugerencias">
-          <button
-            v-for="s in sugerencias"
-            :key="s.lat + s.lon"
-            @click="seleccionarSugerencia(s)"
-          >
-            📍 {{ s.nombre }}, {{ s.pais }}
-            <small v-if="s.region">{{ s.region }}</small>
-          </button>
-        </div>
+        <div class="hero-summary">
+          <div class="summary-card main">
+            <span>🌡️</span>
+            <strong>API real</strong>
+            <small>Open-Meteo</small>
+          </div>
 
-        <p v-if="errorBusqueda" class="error-msg">
-          ⚠️ {{ errorBusqueda }}
-        </p>
+          <div class="summary-card">
+            <span>📊</span>
+            <strong>Estadísticas</strong>
+            <small>Semana completa</small>
+          </div>
+
+          <div class="summary-card">
+            <span>⚠️</span>
+            <strong>Alertas</strong>
+            <small>Reglas simples</small>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="features-section">
-      <div class="feature-card">
-        <span>🌡️</span>
-        <h3>Clima en tiempo real</h3>
-        <p>Consulta temperatura, humedad, viento y sensación térmica.</p>
-      </div>
+    <section class="quick-actions">
+      <button class="action-card" @click="seleccionarCiudad(ciudadesChile[4])">
+        <span>🇨🇱</span>
+        <div>
+          <strong>Santiago</strong>
+          <small>Consultar clima actual</small>
+        </div>
+      </button>
 
-      <div class="feature-card">
-        <span>📅</span>
-        <h3>Pronóstico semanal</h3>
-        <p>Revisa la evolución del clima durante los próximos días.</p>
-      </div>
+      <button class="action-card" @click="seleccionarCiudad(ciudadesChile[7])">
+        <span>🌧️</span>
+        <div>
+          <strong>Valdivia</strong>
+          <small>Ver pronóstico del sur</small>
+        </div>
+      </button>
 
-      <div class="feature-card">
-        <span>⭐</span>
-        <h3>Favoritos</h3>
-        <p>Guarda tus ciudades preferidas al iniciar sesión.</p>
-      </div>
+      <button class="action-card" @click="seleccionarCiudad(ciudadesChile[11])">
+        <span>🌴</span>
+        <div>
+          <strong>Rapa Nui</strong>
+          <small>Explorar clima insular</small>
+        </div>
+      </button>
 
-      <div class="feature-card">
-        <span>🌎</span>
-        <h3>Chile y mundo</h3>
-        <p>Explora ciudades chilenas y capitales internacionales.</p>
-      </div>
+      <button class="action-card" @click="seleccionarCiudad(ciudadesMundo[2])">
+        <span>🌏</span>
+        <div>
+          <strong>Tokio</strong>
+          <small>Capital internacional</small>
+        </div>
+      </button>
     </section>
 
     <section
       v-if="isAuthenticated && favoritos.length"
       class="favorites-section"
     >
-      <div class="favorites-card">
-        <h2>⭐ Tus ciudades favoritas</h2>
-
-        <div class="favorites-list">
-          <button
-            v-for="favorito in favoritos"
-            :key="favorito.nombre"
-            class="favorite-city"
-            @click="seleccionarCiudad(favorito)"
-          >
-            📍 {{ favorito.nombre }}
-          </button>
+      <div class="section-header">
+        <div>
+          <p class="section-label">Acceso rápido</p>
+          <h2>⭐ Tus ciudades favoritas</h2>
         </div>
+      </div>
+
+      <div class="favorites-list">
+        <button
+          v-for="favorito in favoritos"
+          :key="favorito.nombre"
+          class="favorite-city"
+          @click="seleccionarCiudad(favorito)"
+        >
+          📍 {{ favorito.nombre }}
+        </button>
       </div>
     </section>
 
-    <section v-if="!climaActual && !loading" class="quick-section">
-      <div class="quick-card">
-        <h2>🇨🇱 Ciudades de Chile</h2>
-
-        <div class="chips">
-          <button
-            v-for="ciudad in ciudadesChile"
-            :key="ciudad.nombre"
-            @click="seleccionarCiudad(ciudad)"
-          >
-            {{ ciudad.nombre }}
-          </button>
+    <section v-if="!climaActual && !loading" class="explore-section">
+      <div class="section-header">
+        <div>
+          <p class="section-label">Explorar</p>
+          <h2>Selecciona una ciudad para comenzar</h2>
         </div>
+        <p>
+          Puedes buscar cualquier ciudad o elegir una de las sugerencias.
+        </p>
       </div>
 
-      <div class="quick-card">
-        <h2>🌍 Capitales del mundo</h2>
+      <div class="explore-grid">
+        <article class="quick-card">
+          <h3>🇨🇱 Ciudades de Chile</h3>
 
-        <div class="chips">
-          <button
-            v-for="ciudad in ciudadesMundo"
-            :key="ciudad.nombre"
-            @click="seleccionarCiudad(ciudad)"
-          >
-            {{ ciudad.nombre }}
-          </button>
-        </div>
+          <div class="chips">
+            <button
+              v-for="ciudad in ciudadesChile"
+              :key="ciudad.nombre"
+              @click="seleccionarCiudad(ciudad)"
+            >
+              {{ ciudad.nombre }}
+            </button>
+          </div>
+        </article>
+
+        <article class="quick-card">
+          <h3>🌍 Capitales del mundo</h3>
+
+          <div class="chips">
+            <button
+              v-for="ciudad in ciudadesMundo"
+              :key="ciudad.nombre"
+              @click="seleccionarCiudad(ciudad)"
+            >
+              {{ ciudad.nombre }}
+            </button>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -128,80 +173,89 @@
     </section>
 
     <section v-if="climaActual && !loading" class="result-layout">
-      <div class="result-left">
-        <CityImage
-          :ciudad="ciudadActual?.nombre"
-          :pais="ciudadActual?.pais"
-        />
-
-        <div class="map-card">
-          <div>
-            <h3>📍 Ubicación</h3>
-            <p>{{ ciudadActual?.nombre }}, {{ ciudadActual?.pais }}</p>
-          </div>
-
-          <div class="map-frame">
-            <iframe
-              :src="mapUrl"
-              width="100%"
-              height="230"
-              style="border: 0"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
-
-          <div class="coords">
-            <p>Lat: {{ ciudadActual?.lat }}</p>
-            <p>Lon: {{ ciudadActual?.lon }}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="result-right">
-        <WeatherCard
-          :ciudad="ciudadActual"
-          :clima="climaActual"
-          :unidad="unidad"
-          @agregar-favorito="agregarAFavoritos"
-        />
-
-        <div class="section-card">
-          <h3>📅 Pronóstico semanal</h3>
-
-          <div class="forecast-grid">
-            <ForecastCard
-              v-for="dia in pronostico"
-              :key="dia.fecha"
-              :dia="dia"
-              :unidad="unidad"
-            />
-          </div>
+      <div class="result-heading">
+        <div>
+          <p class="section-label">Resultado</p>
+          <h2>{{ ciudadActual?.nombre }}, {{ ciudadActual?.pais }}</h2>
         </div>
 
-        <WeekStats
-          v-if="pronostico.length"
-          :pronostico="pronostico"
-          :unidad="unidad"
-        />
-
-        <div class="alerts">
-          <div
-            v-for="alerta in alertas"
-            :key="alerta.tipo"
-            class="alert warning"
-          >
-            ⚠️ {{ alerta.mensaje }}
-          </div>
-
-          <div v-if="!alertas.length" class="alert success">
-            ✅ Sin alertas relevantes. Condiciones normales.
-          </div>
-        </div>
-
-        <button class="back-btn" @click="limpiarClima">
+        <button class="back-btn small" @click="limpiarClima">
           ← Buscar otra ciudad
         </button>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-left">
+          <CityImage
+            :ciudad="ciudadActual?.nombre"
+            :pais="ciudadActual?.pais"
+          />
+
+          <div class="map-card">
+            <div>
+              <h3>📍 Ubicación</h3>
+              <p>{{ ciudadActual?.nombre }}, {{ ciudadActual?.pais }}</p>
+            </div>
+
+            <div class="map-frame">
+              <iframe
+                :src="mapUrl"
+                width="100%"
+                height="230"
+                style="border: 0"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+
+            <div class="coords">
+              <p>Lat: {{ ciudadActual?.lat }}</p>
+              <p>Lon: {{ ciudadActual?.lon }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-right">
+          <WeatherCard
+            :ciudad="ciudadActual"
+            :clima="climaActual"
+            :unidad="unidad"
+            @agregar-favorito="agregarAFavoritos"
+          />
+
+          <div class="section-card">
+            <h3>📅 Pronóstico semanal</h3>
+
+            <div class="forecast-grid">
+              <ForecastCard
+                v-for="dia in pronostico"
+                :key="dia.fecha"
+                :dia="dia"
+                :unidad="unidad"
+              />
+            </div>
+          </div>
+
+          <WeekStats
+            v-if="pronostico.length"
+            :pronostico="pronostico"
+            :unidad="unidad"
+          />
+
+          <div class="alerts">
+            <div
+              v-for="alerta in alertas"
+              :key="alerta.tipo"
+              class="alert warning"
+            >
+              ⚠️ {{ alerta.mensaje }}
+            </div>
+
+            <div v-if="!alertas.length" class="alert success">
+              ✅ Sin alertas relevantes. Condiciones normales.
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -349,58 +403,70 @@ export default {
 <style scoped>
 .home-page {
   min-height: 100vh;
-  padding: 32px 24px 60px;
+  padding: 28px 24px 60px;
   background:
-    radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.28), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(99, 102, 241, 0.25), transparent 30%),
-    linear-gradient(135deg, #e0f2fe 0%, #eef2ff 45%, #f8fafc 100%);
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 30%),
+    linear-gradient(135deg, #f8fafc 0%, #eef2ff 48%, #e0f2fe 100%);
 }
 
 .hero {
   max-width: 1180px;
-  margin: 0 auto 28px;
-  border-radius: 34px;
-  padding: 48px;
-  overflow: visible;
-  position: relative;
+  margin: 0 auto 18px;
+}
+
+.hero-panel {
+  display: grid;
+  grid-template-columns: 1.35fr 0.65fr;
+  gap: 24px;
+  align-items: stretch;
+  padding: 34px;
+  border-radius: 32px;
   color: white;
   background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.82), rgba(30, 64, 175, 0.72)),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(30, 64, 175, 0.82)),
     url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&w=1600&q=80');
   background-size: cover;
   background-position: center;
-  box-shadow: 0 24px 70px rgba(30, 64, 175, 0.28);
+  box-shadow: 0 24px 70px rgba(30, 64, 175, 0.24);
 }
 
-.hero-content {
-  max-width: 850px;
+.hero-copy {
   position: relative;
 }
 
-.hero-kicker {
-  font-weight: 700;
-  color: #bfdbfe;
+.hero-kicker,
+.section-label {
+  font-weight: 900;
+  color: #93c5fd;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.76rem;
   margin-bottom: 10px;
 }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 5vw, 4.3rem);
-  line-height: 1.05;
-  margin-bottom: 18px;
+  max-width: 760px;
+  font-size: clamp(2.1rem, 4vw, 4rem);
+  line-height: 1.03;
+  margin-bottom: 16px;
 }
 
 .hero-subtitle {
-  font-size: 1.15rem;
+  max-width: 760px;
+  font-size: 1.05rem;
   color: rgba(255, 255, 255, 0.86);
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .search-box {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
+  max-width: 760px;
   background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   backdrop-filter: blur(18px);
   border-radius: 18px;
   padding: 10px;
@@ -429,7 +495,7 @@ export default {
   border: none;
   border-radius: 14px;
   padding: 13px 22px;
-  font-weight: 700;
+  font-weight: 900;
   cursor: pointer;
   color: white;
   background: linear-gradient(135deg, #2563eb, #7c3aed);
@@ -442,15 +508,18 @@ export default {
 }
 
 .search-box button:hover:not(:disabled),
-.back-btn:hover {
-  transform: translateY(-2px);
+.back-btn:hover,
+.action-card:hover,
+.chips button:hover,
+.favorite-city:hover {
+  transform: translateY(-3px);
 }
 
 .sugerencias {
   position: absolute;
-  z-index: 20;
+  z-index: 30;
   margin-top: 10px;
-  width: min(900px, calc(100% - 112px));
+  width: min(760px, 100%);
   background: white;
   border-radius: 18px;
   overflow: hidden;
@@ -465,7 +534,7 @@ export default {
   text-align: left;
   cursor: pointer;
   color: #0f172a;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .sugerencias button:hover {
@@ -481,65 +550,110 @@ export default {
 .error-msg {
   margin-top: 14px;
   color: #fecaca;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-.features-section {
+.hero-summary {
+  display: grid;
+  gap: 14px;
+}
+
+.summary-card {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px);
+}
+
+.summary-card.main {
+  background: rgba(96, 165, 250, 0.22);
+}
+
+.summary-card span {
+  font-size: 2rem;
+}
+
+.summary-card strong {
+  font-size: 1.05rem;
+}
+
+.summary-card small {
+  color: #dbeafe;
+}
+
+.quick-actions {
   max-width: 1180px;
-  margin: 0 auto 24px;
+  margin: 0 auto 22px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
-.feature-card {
-  background: rgba(255, 255, 255, 0.86);
-  border: 1px solid #dbeafe;
+.action-card {
+  border: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: 22px;
-  padding: 20px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  cursor: pointer;
   transition: 0.25s;
 }
 
-.feature-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 38px rgba(37, 99, 235, 0.14);
+.action-card span {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: #eff6ff;
+  font-size: 1.8rem;
 }
 
-.feature-card span {
-  font-size: 2rem;
+.action-card strong {
   display: block;
-  margin-bottom: 10px;
-}
-
-.feature-card h3 {
   color: #0f172a;
-  margin-bottom: 8px;
-  font-size: 1rem;
+  margin-bottom: 3px;
 }
 
-.feature-card p {
+.action-card small {
   color: #64748b;
-  font-size: 0.85rem;
-  line-height: 1.4;
+  font-weight: 700;
 }
 
-.favorites-section {
+.favorites-section,
+.explore-section,
+.result-layout {
   max-width: 1180px;
   margin: 0 auto 24px;
 }
 
-.favorites-card {
-  background: rgba(255, 255, 255, 0.88);
-  border-radius: 24px;
-  padding: 22px;
-  border: 1px solid #dbeafe;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+.section-header,
+.result-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 16px;
 }
 
-.favorites-card h2 {
-  margin-bottom: 14px;
+.section-header h2,
+.result-heading h2 {
   color: #0f172a;
+  font-size: clamp(1.55rem, 3vw, 2.2rem);
+}
+
+.section-header p:last-child {
+  color: #64748b;
+  font-weight: 700;
+  max-width: 420px;
 }
 
 .favorites-list {
@@ -550,11 +664,11 @@ export default {
 
 .favorite-city {
   border: none;
-  padding: 10px 18px;
+  padding: 11px 18px;
   border-radius: 999px;
   background: #eff6ff;
   color: #2563eb;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: 0.25s;
 }
@@ -564,25 +678,24 @@ export default {
   color: white;
 }
 
-.quick-section {
-  max-width: 1180px;
-  margin: 0 auto;
+.explore-grid {
   display: grid;
-  gap: 22px;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
 }
 
 .quick-card,
 .section-card,
 .map-card {
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 26px;
   padding: 24px;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
   backdrop-filter: blur(16px);
 }
 
-.quick-card h2,
+.quick-card h3,
 .section-card h3,
 .map-card h3 {
   color: #0f172a;
@@ -592,22 +705,21 @@ export default {
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 11px;
 }
 
 .chips button {
   border: 1px solid #cbd5e1;
   border-radius: 999px;
-  padding: 11px 20px;
+  padding: 11px 18px;
   background: white;
   color: #1e293b;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   transition: 0.25s;
 }
 
 .chips button:hover {
-  transform: translateY(-3px);
   background: #2563eb;
   border-color: #2563eb;
   color: white;
@@ -618,7 +730,7 @@ export default {
   margin: 40px auto;
   text-align: center;
   color: #1e293b;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .spinner {
@@ -631,9 +743,7 @@ export default {
   animation: spin 1s linear infinite;
 }
 
-.result-layout {
-  max-width: 1180px;
-  margin: 0 auto;
+.result-grid {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   gap: 24px;
@@ -645,6 +755,11 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.back-btn.small {
+  width: auto;
+  white-space: nowrap;
 }
 
 .map-card {
@@ -688,7 +803,7 @@ export default {
 .alert {
   padding: 14px 16px;
   border-radius: 16px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .success {
@@ -701,37 +816,38 @@ export default {
   color: #92400e;
 }
 
-.back-btn {
-  width: 100%;
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-@media (max-width: 900px) {
-  .result-layout {
+@media (max-width: 980px) {
+  .hero-panel,
+  .explore-grid,
+  .result-grid {
     grid-template-columns: 1fr;
   }
 
-  .hero {
-    padding: 36px 24px;
-  }
-
-  .sugerencias {
-    width: calc(100% - 48px);
-  }
-
-  .features-section {
+  .hero-summary,
+  .quick-actions {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .section-header,
+  .result-heading {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
 @media (max-width: 620px) {
   .home-page {
     padding: 20px 14px 40px;
+  }
+
+  .hero-panel {
+    padding: 24px;
   }
 
   .search-box {
@@ -743,12 +859,17 @@ export default {
     display: none;
   }
 
+  .quick-actions,
+  .hero-summary {
+    grid-template-columns: 1fr;
+  }
+
   .coords {
     flex-direction: column;
   }
 
-  .features-section {
-    grid-template-columns: 1fr;
+  .back-btn.small {
+    width: 100%;
   }
 }
 </style>
