@@ -6,12 +6,19 @@ import LoginView from '../views/LoginView.vue'
 import RegistroView from '../views/RegistroView.vue'
 import FavoritosView from '../views/FavoritosView.vue'
 import PerfilView from '../views/PerfilView.vue'
+import DetalleView from '../views/DetalleView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: HomeView
+  },
+  {
+    path: '/detalle/:ciudad',
+    name: 'Detalle',
+    component: DetalleView,
+    props: true
   },
   {
     path: '/login',
@@ -44,7 +51,6 @@ const router = createRouter({
   routes
 })
 
-// Navigation Guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters['auth/isAuthenticated']
 
